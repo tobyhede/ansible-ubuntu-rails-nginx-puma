@@ -1,0 +1,9 @@
+---
+# - name: vagrant
+#   action: shell sudo /etc/init.d/vboxadd setup
+
+- name: user setup
+  action: user name=$user password=$user
+
+- name: setup key
+  action: authorized_key user=$user key='$FILE($ssh_path/.ssh/id_rsa.pub)' state=present

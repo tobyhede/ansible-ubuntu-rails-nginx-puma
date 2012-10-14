@@ -1,0 +1,22 @@
+---
+- hosts: web-servers
+  user: vagrant
+  sudo: true
+  gather_facts: trye
+
+  vars:
+    user: dev
+    home: /home/$user
+    ssh_path: /Users/tobyhede/
+
+  tasks:
+    - name: sanity
+      action: shell echo "hello world"
+
+    - include: base.yml user=$user ssh_path=$ssh_path
+
+  # - include: ruby.yml
+  # - include: nginx.yml
+  # - include: redis.yml
+  # - include: postgres.yml
+
