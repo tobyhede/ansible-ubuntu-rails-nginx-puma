@@ -1,0 +1,5 @@
+ansible-ubuntu-rails-nginx-puma
+===============================
+
+Sample ansible playbook for building vagrant-friendly rails stack on top of nginx and puma. 
+

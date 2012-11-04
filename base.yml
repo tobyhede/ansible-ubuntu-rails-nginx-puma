@@ -2,8 +2,51 @@
 # - name: vagrant
 #   action: shell sudo /etc/init.d/vboxadd setup
 
+# - name: apt update-cache
+#   action: apt update-cache=yes
+
+# - name: install all the things        
+#   action: apt pkg=$item state=present update-cache=yes
+#   with_items:
+#     - ufw
+#     - denyhosts
+#     - ntp
+
+- name: setup firewall
+  action: command ufw allow ssh
+  action: command ufw allow http
+
+- name: admin group 
+  action: group name=admin state=present
+
 - name: user setup
-  action: user name=$user password=$user
+  action: user name=$user password=$user group=admin
 
 - name: setup key
   action: authorized_key user=$user key='$FILE($ssh_path/.ssh/id_rsa.pub)' state=present
+
+- name: suoders  
+  action: template src=templates/sudoers.tmpl dest=/etc/sudoers.d/$user mode=440
+- action: command dpkg-statoverride --update --add root admin 4750 /bin/su
+
+- name: ntp
+  action: service name=ntp state=started enabled=yes
+
+- name: move timezone file
+  action: command mv /etc/localtime /etc/localtime.bak
+
+- name: timezone
+  action: file src=/usr/share/zoneinfo/$timezone  dest=/etc/localtime state=link
+
+- name: harden network with sysctl
+  action: template src=templates/sysctl.tmpl dest=/etc/sysctl.conf
+- action: command sysctl -p
+
+- name: Prevent IP Spoofing.
+  action: lineinfile dest=/etc/host.conf state=present regexp="^nospoof on" line="nospoof on"
+
+- name: secure shared memory
+  action: lineinfile dest=/etc/fstab state=present regexp="^tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" line="tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0"
+
+
+

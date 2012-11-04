@@ -8,6 +8,7 @@
     user: dev
     home: /home/$user
     ssh_path: /Users/tobyhede/
+    timezone: Australia/Sydney
 
   tasks:
     - name: sanity
